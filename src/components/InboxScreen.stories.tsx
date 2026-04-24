@@ -4,6 +4,7 @@ import InboxScreen from "./InboxScreen";
 import store from "../lib/store";
 import { http, HttpResponse } from "msw";
 import { MockedState } from "./TaskList.stories";
+import { waitFor, waitForElementToBeRemoved } from 'storybook/test';
 
 const meta = {
   component: InboxScreen,
@@ -26,6 +27,16 @@ export const Default: Story = {
       ],
     },
   },
+
+  play: async ({ canvas, userEvent }) => {
+    // Waits for component to transition from loading state
+    await waitForElementToBeRemoved(await canvas.findByTestId('loading'));
+    await waitFor(async () => {
+      // Simulates pinning first and third task
+      await userEvent.click(canvas.getByLabelText('pinTask-1'));
+      await userEvent.click(canvas.getByLabelText('pinTask-3'));
+    });
+  } ,
 };
 
 export const Error: Story = {
